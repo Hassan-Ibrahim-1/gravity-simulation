@@ -12,7 +12,7 @@ Camera::Camera(Transform transform, glm::vec3 world_up)
 }
 
 Camera::Camera(glm::vec3 position, Rotation rotation, glm::vec3 scale, glm::vec3 world_up)
-    : Camera(Transform(position, rotation, scale), world_up) {}
+    : Camera(Transform(position, scale, rotation), world_up) {}
 /*    : transform(position, rotation, scale),*/
 /*      world_up(world_up),*/
 /*      up(world_up) {*/

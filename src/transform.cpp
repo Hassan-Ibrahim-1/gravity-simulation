@@ -7,7 +7,7 @@ Rotation::Rotation(float yaw, float pitch, float roll)
       pitch(pitch),
       roll(roll) {}
 
-Transform::Transform(glm::vec3 position, Rotation rotation, glm::vec3 scale)
+Transform::Transform(glm::vec3 position, glm::vec3 scale, Rotation rotation)
     : position(position),
       rotation(rotation),
       scale(scale) {}

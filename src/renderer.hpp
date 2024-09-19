@@ -35,7 +35,7 @@ public:
     void render();
 
 private:
-    std::vector<float> _points;
+    std::vector<Point> _points;
     std::vector<Rect> _rects;
     std::vector<DrawMode> _rect_draw_modes;
 
@@ -63,6 +63,8 @@ private:
         0, 1, 3,
         1, 2, 3 
     };
+
+    static constexpr float _point_vertex = 0.0f;
 
     void push_point(float x, float y, float z);
     void push_point_color(glm::vec4& color);

@@ -72,6 +72,9 @@ int main() {
     Camera& camera = Globals::camera;
     camera = Camera(glm::vec3(0.0f, 0.0f, 1.0f));
 
+    glm::vec3 position(0);
+    glm::vec4 color(1);
+
     while (!glfwWindowShouldClose(window.data())) {
         float current_frame = glfwGetTime();
         delta_time = current_frame - last_frame;
@@ -94,11 +97,22 @@ int main() {
         ImGui_ImplGlfw_NewFrame();
         ImGui::NewFrame();
 
+        ImGui::Begin("config");
+        /*ImGui::SetWindowSize("config", ImVec2(450, 230));*/
+
+        ImGui::ColorEdit3("color", (float*)&color);
+        ImGui::DragFloat3("position", (float*)&position, 0.01f, -1.0f, 1.0f);
+
+        ImGui::End();
+
         glClearColor(0.1f, 0.1f, 0.1f, 1.0f);
         glClear(GL_DEPTH_BUFFER_BIT | GL_COLOR_BUFFER_BIT);
 
         glm::mat4 view = camera.get_view_matrix();
         renderer.shaders.point.set_mat4("view", view);
+
+        Point point(position, color);
+        renderer.draw_point(point);
 
         // render imgui windows
         ImGui::Render();
