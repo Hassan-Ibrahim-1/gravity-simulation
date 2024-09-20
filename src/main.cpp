@@ -75,7 +75,7 @@ int main() {
     camera = Camera(glm::vec3(0.0f, 0.0f, 1.0f));
 
     glm::vec3 position(0);
-    glm::vec3 scale(1);
+    glm::vec3 scale(0.5, 0.6, 0);
     glm::vec4 color(1);
 
     while (!glfwWindowShouldClose(window.data())) {
@@ -126,6 +126,9 @@ int main() {
         /*renderer.draw_point(point);*/
         Circle circle(Transform(position, scale), 0, color);
         renderer.draw_circle(circle);
+
+        Circle circle2(Transform(glm::vec3(0), scale));
+        renderer.draw_circle(circle2);
 
         /*if (renderer.prev_segment != renderer._n_circle_segments) {*/
         /*    renderer.prev_segment = renderer._n_circle_segments;*/
