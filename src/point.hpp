@@ -4,8 +4,7 @@
 
 #include  "transform.hpp"
 
-class Point {
-public:
+struct Point {
     Transform transform = Transform();
     glm::vec4 color = glm::vec4(1);
     

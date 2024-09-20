@@ -3,6 +3,7 @@
 
 #include <glm/glm.hpp>
 #include <glm/gtc/matrix_transform.hpp>
+#include <iterator>
 
 #include "imgui.h"
 #include "imgui_impl_glfw.h"
@@ -14,6 +15,7 @@
 #include "utils.hpp"
 #include "window.hpp"
 #include "globals.hpp"
+#include "camera.hpp"
 
 #define WINDOW_WIDTH 1280
 #define WINDOW_HEIGHT 720
@@ -73,6 +75,7 @@ int main() {
     camera = Camera(glm::vec3(0.0f, 0.0f, 1.0f));
 
     glm::vec3 position(0);
+    glm::vec3 scale(1);
     glm::vec4 color(1);
 
     while (!glfwWindowShouldClose(window.data())) {
@@ -101,24 +104,48 @@ int main() {
         /*ImGui::SetWindowSize("config", ImVec2(450, 230));*/
 
         ImGui::ColorEdit3("color", (float*)&color);
-        ImGui::DragFloat3("position", (float*)&position, 0.01f, -1.0f, 1.0f);
+        ImGui::DragFloat2("position", (float*)&position, 0.01f, -1.0f, 1.0f);
+        ImGui::DragFloat2("scale", (float*)&scale, 0.01f, -2.0f, 2.0f);
+        ImGui::DragFloat2("circle start", (float*)&renderer.circle_start, 0.1f);
+        ImGui::DragInt("segments", (int*)&renderer.n_circle_sides, 1, 1, 100000);
+        ImGui::Text("Application average %.3f ms/frame (%.1f FPS)", 1000.0f / Globals::io->Framerate, Globals::io->Framerate);
 
         ImGui::End();
 
         glClearColor(0.1f, 0.1f, 0.1f, 1.0f);
+        /*glClearColor(1, 1, 1, 1);*/
         glClear(GL_DEPTH_BUFFER_BIT | GL_COLOR_BUFFER_BIT);
 
         glm::mat4 view = camera.get_view_matrix();
+        renderer.shaders.point.use();
         renderer.shaders.point.set_mat4("view", view);
+        renderer.shaders.point.set_vec3("scale", scale);
 
-        Point point(position, color);
-        renderer.draw_point(point);
+        /*Point point(position, color);*/
+        /*renderer.draw_point(point);*/
+        Circle circle(position, 0, color);
+        renderer.draw_circle(circle);
+
+        if (renderer.prev_segment != renderer.n_circle_sides) {
+            renderer.prev_segment = renderer.n_circle_sides;
+            renderer.generate_circle_vertices();
+            renderer.init_vaos();
+        }
+
+        if (renderer.circle_start != renderer.prev_circle_start) {
+            printf("generating circle vertices again\n");
+            renderer.prev_circle_start = renderer.circle_start;
+            renderer._circle_vertices.clear();
+            renderer.generate_circle_vertices();
+            renderer.init_vaos();
+        }
+
+        renderer.render();
 
         // render imgui windows
         ImGui::Render();
         ImGui_ImplOpenGL3_RenderDrawData(ImGui::GetDrawData());
 
-        renderer.render();
 
         glfwSwapBuffers(window.data());
         glfwPollEvents();
