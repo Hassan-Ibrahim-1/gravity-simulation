@@ -72,7 +72,7 @@ void Renderer::render() {
 
         if (draw_mode == DrawMode::FILL) {
             glPolygonMode(GL_FRONT_AND_BACK, GL_FILL);
-            glDrawElements(GL_TRIANGLE_FAN, 6, GL_UNSIGNED_INT, 0);
+            glDrawElements(GL_TRIANGLES, 6, GL_UNSIGNED_INT, 0);
         }
         else if (draw_mode == DrawMode::LINE) {
             glDrawArrays(GL_LINE_LOOP, 0, 4);
@@ -84,7 +84,7 @@ void Renderer::render() {
         glm::mat4 model = circle.transform.get_mat4();
         shaders.point.set_mat4("model", model);
         shaders.point.set_vec4("color", circle.color);
-        glDrawArrays(GL_TRIANGLE_FAN, 0, n_circle_sides + 2);
+        glDrawArrays(GL_TRIANGLE_FAN, 0, _n_circle_segments + 2);
     }
 
     _points.clear();
@@ -141,20 +141,19 @@ void Renderer::init_shaders() {
 }
 
 void Renderer::generate_circle_vertices() {
-    static constexpr float radius = 0.5f;
     static constexpr float two_pi = M_PI * 2;
-    uint n_vertices = n_circle_sides + 2;
+    static constexpr float radius = 0.5f;
 
-    /*_circle_vertices.clear();*/
+    /*_circle_vertices.push_back(_circle_start.x);*/
+    /*_circle_vertices.push_back(_circle_start.y);*/
 
-    _circle_vertices.push_back(circle_start.x);
-    _circle_vertices.push_back(circle_start.y);
-
-    for (size_t i = 0; i < n_vertices; i += 3) {
+    for (size_t i = 0; i < _n_circle_segments; i++) {
         // x, y, z
-        float angle = 2.0f * M_PI * i / n_circle_sides;
-        _circle_vertices.push_back(circle_start.x + cos(angle) * radius);
-        _circle_vertices.push_back(circle_start.y + sin(angle) * radius);
+        /*float angle = 2.0f * M_PI * i / _n_circle_segments;*/
+        _circle_vertices.push_back(_circle_start.x + radius * cos((float) i / _n_circle_segments * two_pi));
+        _circle_vertices.push_back(_circle_start.y + radius * sin((float) i / _n_circle_segments * two_pi));
+        /*_circle_vertices.push_back(_circle_start.x + cos(angle) * radius);*/
+        /*_circle_vertices.push_back(_circle_start.y + sin(angle) * radius);*/
         _circle_vertices.push_back(0);
     }
 }

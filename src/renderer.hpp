@@ -37,13 +37,6 @@ public:
 
     // Actually render all draw calls
     void render();
-    void generate_circle_vertices();
-
-    glm::vec2 circle_start = glm::vec2(0);
-    glm::vec2 prev_circle_start = glm::vec2(0);
-    int n_circle_sides = 360;
-    int prev_segment = n_circle_sides;
-    std::vector<float> _circle_vertices;
 
 private:
     std::vector<Point> _points;
@@ -84,6 +77,12 @@ private:
     };
 
     static constexpr float _point_vertex = 0.0f;
+
+    glm::vec2 _circle_start = glm::vec2(0.0);
+    std::vector<float> _circle_vertices;
+    int _n_circle_segments = 150;
+
+    void generate_circle_vertices();
 
     void push_point(float x, float y, float z);
     void push_point_color(glm::vec4& color);

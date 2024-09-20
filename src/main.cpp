@@ -106,8 +106,9 @@ int main() {
         ImGui::ColorEdit3("color", (float*)&color);
         ImGui::DragFloat2("position", (float*)&position, 0.01f, -1.0f, 1.0f);
         ImGui::DragFloat2("scale", (float*)&scale, 0.01f, -2.0f, 2.0f);
-        ImGui::DragFloat2("circle start", (float*)&renderer.circle_start, 0.1f);
-        ImGui::DragInt("segments", (int*)&renderer.n_circle_sides, 1, 1, 100000);
+        /*ImGui::DragFloat2("circle start", (float*)&renderer._circle_start, 0.1f);*/
+        /*ImGui::DragFloat("radius", (float*)&renderer.radius, 0.01f, 0, 10000);*/
+        /*ImGui::DragInt("segments", (int*)&renderer._n_circle_segments, 1, 1, 100000);*/
         ImGui::Text("Application average %.3f ms/frame (%.1f FPS)", 1000.0f / Globals::io->Framerate, Globals::io->Framerate);
 
         ImGui::End();
@@ -119,26 +120,32 @@ int main() {
         glm::mat4 view = camera.get_view_matrix();
         renderer.shaders.point.use();
         renderer.shaders.point.set_mat4("view", view);
-        renderer.shaders.point.set_vec3("scale", scale);
 
         /*Point point(position, color);*/
+        /*point.transform.scale = scale;*/
         /*renderer.draw_point(point);*/
-        Circle circle(position, 0, color);
+        Circle circle(Transform(position, scale), 0, color);
         renderer.draw_circle(circle);
 
-        if (renderer.prev_segment != renderer.n_circle_sides) {
-            renderer.prev_segment = renderer.n_circle_sides;
-            renderer.generate_circle_vertices();
-            renderer.init_vaos();
-        }
-
-        if (renderer.circle_start != renderer.prev_circle_start) {
-            printf("generating circle vertices again\n");
-            renderer.prev_circle_start = renderer.circle_start;
-            renderer._circle_vertices.clear();
-            renderer.generate_circle_vertices();
-            renderer.init_vaos();
-        }
+        /*if (renderer.prev_segment != renderer._n_circle_segments) {*/
+        /*    renderer.prev_segment = renderer._n_circle_segments;*/
+        /*    renderer._circle_vertices.clear();*/
+        /*    renderer.generate_circle_vertices();*/
+        /*    renderer.init_vaos();*/
+        /*}*/
+        /**/
+        /*if (renderer._circle_start != renderer.prev_circle_start) {*/
+        /*    renderer.prev_circle_start = renderer._circle_start;*/
+        /*    renderer._circle_vertices.clear();*/
+        /*    renderer.generate_circle_vertices();*/
+        /*    renderer.init_vaos();*/
+        /*}*/
+        /*if (renderer.radius != renderer.prev_radius) {*/
+        /*    renderer.prev_radius = renderer.radius;*/
+        /*    renderer._circle_vertices.clear();*/
+        /*    renderer.generate_circle_vertices();*/
+        /*    renderer.init_vaos();*/
+        /*}*/
 
         renderer.render();
 
