@@ -28,8 +28,10 @@ void Sim::run() {
         if (acceleration.x == 0 && acceleration.y == 0) {
             printf("acceleration is 0");
         }
-        acceleration /= 10000.0f;
-        _planets[0].velocity = v1 + (acceleration) * Globals::delta_time;
+        /*acceleration /= 10000.0f;*/
+        _planets[0].velocity = _planets[0].initial_velocity + (acceleration) * Globals::delta_time;
+        acceleration = calculate_acceleration(_planets[1], _planets[0]);
+        _planets[1].velocity = _planets[1].initial_velocity + acceleration * Globals::delta_time;
         /*}*/
         // TODO: have update render planets
         update();
@@ -54,14 +56,19 @@ void Sim::create_imgui_windows() {
 
     if (ImGui::Button("reset")) {
         _planets[0].body.transform.position = glm::vec3(0);
+        _planets[1].body.transform.position = glm::vec3(0.3f);
     }
 
     if (_start) {
-        _start = ImGui::Button("stop");
+        if (ImGui::Button("stop")) {
+            _start = false;
+        }
     }
 
     else if (!_start) {
-        _start = ImGui::Button("start");
+        if (ImGui::Button("start")) {
+            _start = true;
+        }
     }
 
     ImGui::Text("Application average %.3f ms/frame (%.1f FPS)", 1000.0f / Globals::io->Framerate, Globals::io->Framerate);
@@ -90,11 +97,11 @@ void Sim::render_planets() {
 }
 
 glm::vec3 Sim::calculate_force(float mass1, float mass2, glm::vec3 distance) {
-    return _gravity_constant * ((mass1 * mass1) / distance);
+    return _gravity_constant * ((mass1 * mass1) / distance) / 1000.0f;
 }
 
 glm::vec3 Sim::calculate_acceleration(GravityObject obj1, GravityObject obj2) {
     // a = f / m
-    return calculate_force(obj1.mass, obj2.mass, obj2.body.transform.position - obj1.body.transform.position);
+    return calculate_force(obj1.mass, obj2.mass, obj2.body.transform.position - obj1.body.transform.position) / obj1.mass;
 }
 
