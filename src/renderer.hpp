@@ -30,7 +30,7 @@ public:
     void draw_rect(float width, float height, glm::vec3 position, glm::vec4 color);
 
     void draw_circle(Circle& circle);
-    void draw_circle(glm::vec3 position, float radius, glm::vec4 color);
+    void draw_circle(glm::vec3 position, glm::vec4 color);
     void init_vaos();
 
     void reload_shaders();

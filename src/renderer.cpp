@@ -43,8 +43,8 @@ void Renderer::draw_circle(Circle& circle) {
     _circles.push_back(circle);
 }
 
-void Renderer::draw_circle(glm::vec3 position, float radius, glm::vec4 color) {
-    _circles.push_back(Circle(position, radius, color));
+void Renderer::draw_circle(glm::vec3 position, glm::vec4 color) {
+    _circles.push_back(Circle(position, color));
 }
 
 void Renderer::render() {

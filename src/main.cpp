@@ -3,7 +3,6 @@
 
 #include <glm/glm.hpp>
 #include <glm/gtc/matrix_transform.hpp>
-#include <iterator>
 
 #include "imgui.h"
 #include "imgui_impl_glfw.h"
@@ -12,6 +11,7 @@
 #include "error_handler.hpp"
 #include "input_handler.hpp"
 #include "renderer.hpp"
+#include "sim.hpp"
 #include "utils.hpp"
 #include "window.hpp"
 #include "globals.hpp"
@@ -75,13 +75,17 @@ int main() {
     camera = Camera(glm::vec3(0.0f, 0.0f, 1.0f));
 
     glm::vec3 position(0);
-    glm::vec3 scale(0.5, 0.6, 0);
+    glm::vec3 scale(0.5, 0.73, 0);
     glm::vec4 color(1);
+
+    Sim sim;
+    sim.init();
 
     while (!glfwWindowShouldClose(window.data())) {
         float current_frame = glfwGetTime();
         delta_time = current_frame - last_frame;
         last_frame = current_frame;
+        Globals::delta_time = delta_time;
 
         if (glfwGetWindowAttrib(window.data(), GLFW_ICONIFIED) != 0) {
             ImGui_ImplGlfw_Sleep(10);
@@ -100,18 +104,18 @@ int main() {
         ImGui_ImplGlfw_NewFrame();
         ImGui::NewFrame();
 
-        ImGui::Begin("config");
+        /*ImGui::Begin("config");*/
         /*ImGui::SetWindowSize("config", ImVec2(450, 230));*/
 
-        ImGui::ColorEdit3("color", (float*)&color);
-        ImGui::DragFloat2("position", (float*)&position, 0.01f, -1.0f, 1.0f);
-        ImGui::DragFloat2("scale", (float*)&scale, 0.01f, -2.0f, 2.0f);
+        /*ImGui::ColorEdit3("color", (float*)&color);*/
+        /*ImGui::DragFloat2("position", (float*)&position, 0.01f, -1.0f, 1.0f);*/
+        /*ImGui::DragFloat2("scale", (float*)&scale, 0.01f, -2.0f, 2.0f);*/
         /*ImGui::DragFloat2("circle start", (float*)&renderer._circle_start, 0.1f);*/
         /*ImGui::DragFloat("radius", (float*)&renderer.radius, 0.01f, 0, 10000);*/
         /*ImGui::DragInt("segments", (int*)&renderer._n_circle_segments, 1, 1, 100000);*/
-        ImGui::Text("Application average %.3f ms/frame (%.1f FPS)", 1000.0f / Globals::io->Framerate, Globals::io->Framerate);
-
-        ImGui::End();
+        /*ImGui::Text("Application average %.3f ms/frame (%.1f FPS)", 1000.0f / Globals::io->Framerate, Globals::io->Framerate);*/
+        /**/
+        /*ImGui::End();*/
 
         glClearColor(0.1f, 0.1f, 0.1f, 1.0f);
         /*glClearColor(1, 1, 1, 1);*/
@@ -121,14 +125,16 @@ int main() {
         renderer.shaders.point.use();
         renderer.shaders.point.set_mat4("view", view);
 
+        sim.run();
+
         /*Point point(position, color);*/
         /*point.transform.scale = scale;*/
         /*renderer.draw_point(point);*/
-        Circle circle(Transform(position, scale), 0, color);
-        renderer.draw_circle(circle);
-
-        Circle circle2(Transform(glm::vec3(0), scale));
-        renderer.draw_circle(circle2);
+        /*Circle circle(Transform(position, scale), color);*/
+        /*renderer.draw_circle(circle);*/
+        /**/
+        /*Circle circle2(Transform(glm::vec3(0), scale));*/
+        /*renderer.draw_circle(circle2);*/
 
         /*if (renderer.prev_segment != renderer._n_circle_segments) {*/
         /*    renderer.prev_segment = renderer._n_circle_segments;*/
