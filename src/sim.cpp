@@ -12,8 +12,9 @@ void Sim::init() {
 
 void Sim::run() {
     create_imgui_windows();
-    glm::vec3 v1 = _v1 / 1000.0f;
-    _planets[0].velocity = v1 * 1.0f * (float) glfwGetTime() * Globals::delta_time;
+    // TODO: Treat position like this as well
+    glm::vec3 v1 = _v1 / 10.0f;
+    _planets[0].velocity = v1 + 1.0f *  Globals::delta_time;
     if (_start_time + _time_offset < glfwGetTime()) {
         update();
         _start_time = glfwGetTime();
@@ -47,6 +48,7 @@ void Sim::update() {
 }
 
 void Sim::render_planets() {
+    /*_planets[0].body.render();*/
     for (GravityObject& planet : _planets) {
         planet.body.render();
     }
