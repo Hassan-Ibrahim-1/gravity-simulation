@@ -25,7 +25,7 @@ void Sim::run() {
 void Sim::create_imgui_windows() {
     ImGui::Begin("gravity simulation");
     ImGui::DragFloat("time offset", &_time_offset, 0.01f, -1.0f, 2.0f);
-    ImGui::DragFloat3("velocity", (float*)&_v1, 0.1f, -10.0f, 10.0f);
+    ImGui::DragFloat3("velocity", (float*)&_v1, 0.1f, -50.0f, 50.0f);
     if (ImGui::Button("reset")) {
         _planets[0].body.transform.position = glm::vec3(0);
     }
@@ -35,7 +35,7 @@ void Sim::create_imgui_windows() {
 }
 
 void Sim::spawn_initial_planets() {
-    GravityObject g1 = GravityObject(Transform(glm::vec3(0), glm::vec3(0.2, 0.33, 1)), 1.0f, _v1);
+    GravityObject g1 = GravityObject(Transform(glm::vec3(0), glm::vec3(0.1, 0.23, 1)), 1.0f, _v1);
     GravityObject g2 = GravityObject(Transform(glm::vec3(0.3), glm::vec3(0.2, 0.33, 1)));
     _planets.push_back(g1);
     _planets.push_back(g2);
