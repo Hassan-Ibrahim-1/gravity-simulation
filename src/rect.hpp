@@ -4,10 +4,10 @@
 #include "transform.hpp"
 
 struct Rect {
-    Transform transform;
-    glm::vec4 color;
+    Transform transform = Transform();
+    glm::vec4 color = glm::vec4();
 
-    Rect(Transform& transform, glm::vec4 color);
+    Rect(Transform transform, glm::vec4 color);
     Rect(glm::vec3 position, glm::vec4 color);
     Rect(
         float x,

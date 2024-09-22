@@ -1,7 +1,7 @@
 #include "rect.hpp"
 #include "transform.hpp"
 
-Rect::Rect(Transform& transform, glm::vec4 color)
+Rect::Rect(Transform transform, glm::vec4 color)
     : transform(transform), color(color) {}
 
 Rect::Rect(glm::vec3 position, glm::vec4 color)

@@ -15,6 +15,7 @@
 #include "utils.hpp"
 #include "window.hpp"
 #include "globals.hpp"
+#include "settings.hpp"
 #include "camera.hpp"
 
 #define WINDOW_WIDTH 1280
@@ -92,33 +93,19 @@ int main() {
             continue;
         }
 
-        /*if (Settings::wireframe_enabled) {*/
-        /*    glPolygonMode(GL_FRONT_AND_BACK, GL_LINE);*/
-        /*}*/
-        /*else {*/
-        /*    glPolygonMode(GL_FRONT_AND_BACK, GL_FILL);*/
-        /*}*/
+        if (Settings::wireframe_enabled) {
+            glPolygonMode(GL_FRONT_AND_BACK, GL_LINE);
+        }
+        else {
+            glPolygonMode(GL_FRONT_AND_BACK, GL_FILL);
+        }
 
         // start imgui frame
         ImGui_ImplOpenGL3_NewFrame();
         ImGui_ImplGlfw_NewFrame();
         ImGui::NewFrame();
 
-        /*ImGui::Begin("config");*/
-        /*ImGui::SetWindowSize("config", ImVec2(450, 230));*/
-
-        /*ImGui::ColorEdit3("color", (float*)&color);*/
-        /*ImGui::DragFloat2("position", (float*)&position, 0.01f, -1.0f, 1.0f);*/
-        /*ImGui::DragFloat2("scale", (float*)&scale, 0.01f, -2.0f, 2.0f);*/
-        /*ImGui::DragFloat2("circle start", (float*)&renderer._circle_start, 0.1f);*/
-        /*ImGui::DragFloat("radius", (float*)&renderer.radius, 0.01f, 0, 10000);*/
-        /*ImGui::DragInt("segments", (int*)&renderer._n_circle_segments, 1, 1, 100000);*/
-        /*ImGui::Text("Application average %.3f ms/frame (%.1f FPS)", 1000.0f / Globals::io->Framerate, Globals::io->Framerate);*/
-        /**/
-        /*ImGui::End();*/
-
         glClearColor(0.1f, 0.1f, 0.1f, 1.0f);
-        /*glClearColor(1, 1, 1, 1);*/
         glClear(GL_DEPTH_BUFFER_BIT | GL_COLOR_BUFFER_BIT);
 
         glm::mat4 view = camera.get_view_matrix();
@@ -126,35 +113,6 @@ int main() {
         renderer.shaders.point.set_mat4("view", view);
 
         sim.run();
-
-        /*Point point(position, color);*/
-        /*point.transform.scale = scale;*/
-        /*renderer.draw_point(point);*/
-        /*Circle circle(Transform(position, scale), color);*/
-        /*renderer.draw_circle(circle);*/
-        /**/
-        /*Circle circle2(Transform(glm::vec3(0), scale));*/
-        /*renderer.draw_circle(circle2);*/
-
-        /*if (renderer.prev_segment != renderer._n_circle_segments) {*/
-        /*    renderer.prev_segment = renderer._n_circle_segments;*/
-        /*    renderer._circle_vertices.clear();*/
-        /*    renderer.generate_circle_vertices();*/
-        /*    renderer.init_vaos();*/
-        /*}*/
-        /**/
-        /*if (renderer._circle_start != renderer.prev_circle_start) {*/
-        /*    renderer.prev_circle_start = renderer._circle_start;*/
-        /*    renderer._circle_vertices.clear();*/
-        /*    renderer.generate_circle_vertices();*/
-        /*    renderer.init_vaos();*/
-        /*}*/
-        /*if (renderer.radius != renderer.prev_radius) {*/
-        /*    renderer.prev_radius = renderer.radius;*/
-        /*    renderer._circle_vertices.clear();*/
-        /*    renderer.generate_circle_vertices();*/
-        /*    renderer.init_vaos();*/
-        /*}*/
 
         renderer.render();
 
@@ -167,6 +125,8 @@ int main() {
         glfwPollEvents();
     }
     cleanup();
+
+    return 0;
 }
 
 static void cleanup() {

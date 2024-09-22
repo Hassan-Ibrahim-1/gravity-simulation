@@ -2,7 +2,8 @@
 
 #include "circle.hpp"
 
-struct GravityObject {
+class GravityObject {
+public:
     Circle body;
     float mass;
     glm::vec3 velocity;
@@ -12,5 +13,7 @@ struct GravityObject {
 
     // updates scale based on mass
     void update();
+private:
+    bool _first_update = true;
 };
 
