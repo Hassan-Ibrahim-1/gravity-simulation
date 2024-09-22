@@ -34,5 +34,6 @@ private:
 
     // TODO: only calculate if values are changed
     void trace_predicted_paths(GravityObject obj1, GravityObject obj2);
+    bool mouse_click_on_body(GravityObject& obj);
 };
 

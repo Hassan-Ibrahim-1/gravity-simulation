@@ -47,6 +47,7 @@ int main() {
     glfwSetKeyCallback(window.data(), InputHandler::key_callback);
     glfwSetCursorPosCallback(window.data(), InputHandler::mouse_movement_callback);
     /*glfwSetScrollCallback(window.get_window(), InputHandler::mouse_scroll_callback);*/
+    glfwSetMouseButtonCallback(window.data(), InputHandler::mouse_button_callback);
 
     // Enable vsync
     glfwSwapInterval(1);
@@ -56,7 +57,7 @@ int main() {
     
     // imgui context
     ImGuiIO& io = Utils::create_imgui_context();
-    Globals::io = &io;
+    InputHandler::io = &io;
 
     ImGui::StyleColorsDark();
 
@@ -87,6 +88,9 @@ int main() {
         delta_time = current_frame - last_frame;
         last_frame = current_frame;
         Globals::delta_time = delta_time;
+
+        // NOTE: Have to call this for mouse updates
+        InputHandler::process_input(window.data());
 
         if (glfwGetWindowAttrib(window.data(), GLFW_ICONIFIED) != 0) {
             ImGui_ImplGlfw_Sleep(10);

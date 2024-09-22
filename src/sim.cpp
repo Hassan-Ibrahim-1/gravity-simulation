@@ -2,6 +2,7 @@
 
 #include "imgui.h"
 
+#include "input_handler.hpp"
 #include "sim.hpp"
 #include "globals.hpp"
 #include "utils.hpp"
@@ -33,14 +34,16 @@ void Sim::run() {
 }
 
 void Sim::create_imgui_windows() {
+
     ImGui::Begin("gravity simulation");
+
     ImGui::DragFloat("mass1", &mass1, 100.0f, 0.0f);
-    /*ImGui::DragFloat2("scale1", (float*)&scale, 0.01f, -1.0f, 1.0f);*/
+    ImGui::DragFloat2("scale1", (float*)&_planets[0].body.transform.scale, 0.01f, -2.0f, 2.0f);
 
     ImGui::DragFloat("mass2", &mass2, 100.0f, 0.0f);
     ImGui::DragFloat2("position 2", (float*) &_planets[1].body.transform.position, 0.01f, -1.0f, 1.0f);
     ImGui::DragFloat2("velocity1", (float*)&_planets[1].initial_velocity, 0.01f, -50.0f, 50.0f);
-    /*ImGui::DragFloat2("scale2", (float*)&_planets[1].body.transform.scale, 0.01f, -1.0f, 1.0f);*/
+    ImGui::DragFloat2("scale2", (float*)&_planets[1].body.transform.scale, 0.01f, -1.0f, 1.0f);
 
     ImGui::DragInt("time steps", &_time_steps, 1, 0);
 
@@ -61,26 +64,38 @@ void Sim::create_imgui_windows() {
         _start = true;
     }
 
-    ImGui::Text("mouse: (%.4f, %.4f)", Globals::mouse_pos.x, Globals::mouse_pos.y);
+    ImGui::Text("mouse: (%.4f, %.4f)", InputHandler::get_mouse_pos_x(), InputHandler::get_mouse_pos_y());
 
-    if (Utils::mouse_in_circle(_planets[0].body)) {
-        ImGui::Text("mouse in planet 1 with radius: %.3f", _planets[0].body.radius());
+    /*if (Utils::mouse_in_circle(_planets[0].body)) {*/
+    /*    ImGui::Text("mouse in planet 1 with radius: %.3f", _planets[0].body.radius());*/
+    /*    }*/
+    /*if (Utils::mouse_in_circle(_planets[1].body)) {*/
+    /*    ImGui::Text("mouse in planet 2 with radius: %.3f", _planets[1].body.radius());*/
+    /*}*/
+    /*else {*/
+    /*    ImGui::Text("mouse outside of any planets");*/
+    /*}*/
+
+    if (mouse_click_on_body(_planets[0])) {
+        ImGui::Text("planet 1 clicked!");
+        printf("planet 1 clicked\n");
     }
-    else if (Utils::mouse_in_circle(_planets[1].body)) {
-        ImGui::Text("mouse in planet 2");
-    }
-    else {
-        ImGui::Text("mouse outside of any planets");
+    if (Utils::mouse_in_circle(_planets[1].body)) {
+        ImGui::Text("HOVERING ON PLANET 2");
+        if (InputHandler::mouse_button_released(MouseButton::LEFT)) {
+            ImGui::Text("planet 2 clicked!");
+            printf("planet 2 clicked\n");
+        }
     }
 
-    ImGui::Text("Application average %.3f ms/frame (%.1f FPS)", 1000.0f / Globals::io->Framerate, Globals::io->Framerate);
+    ImGui::Text("Application average %.3f ms/frame (%.1f FPS)", 1000.0f / InputHandler::io->Framerate, InputHandler::io->Framerate);
     ImGui::End();
 
 }
 
 void Sim::spawn_initial_planets() {
-    GravityObject g1 = GravityObject(Transform(glm::vec3(0), glm::vec3(0.01f, 0.02f, 1)), 1.0f, glm::vec3(0));
-    GravityObject g2 = GravityObject(Transform(glm::vec3(0.3, 0, 0), glm::vec3(0.01, 0.02, 1)));
+    GravityObject g1 = GravityObject(Transform(glm::vec3(0), glm::vec3(0.2f, 0.2f, 1)), 1.0f, glm::vec3(0));
+    GravityObject g2 = GravityObject(Transform(glm::vec3(0.3, 0, 0), glm::vec3(0.2, 0.2, 1)));
     _planets.push_back(g1);
     _planets.push_back(g2);
 }
@@ -113,6 +128,7 @@ void Sim::trace_predicted_paths(GravityObject g1, GravityObject g2) {
     std::vector<Point> positions;
 
     positions.push_back(Point(g2.body.transform.position, glm::vec4(1)));
+    positions.push_back(Point());
 
     for (int i = 0; i < _time_steps; i++) {
         glm::vec3 acceleration = calculate_acceleration(g1, g2);
@@ -129,5 +145,16 @@ void Sim::trace_predicted_paths(GravityObject g1, GravityObject g2) {
     for (auto& position : positions) {
         Globals::renderer->draw_point(position);
     }
+}
+
+bool Sim::mouse_click_on_body(GravityObject& obj) {
+    // NOTE: doesn't work if the if statements are switched for some reason
+    if (Utils::mouse_in_circle(obj.body)) {
+        if (InputHandler::mouse_button_released(MouseButton::LEFT)) {
+            /*printf("CIRCLE CLICKED\n");*/
+            return true;
+        }
+    }
+    return false;
 }
 

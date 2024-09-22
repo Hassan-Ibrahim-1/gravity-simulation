@@ -1,6 +1,7 @@
 #include <ctime>
 
 #include "utils.hpp"
+#include "input_handler.hpp"
 #include "globals.hpp"
 
 void Utils::init() {
@@ -44,8 +45,7 @@ bool Utils::mouse_in_circle(Circle& circle) {
 }
 
 bool Utils::mouse_in_circle(glm::vec3 position, float radius) {
-    glm::vec2& mouse_p = Globals::mouse_pos;
+    glm::vec2 mouse_p = InputHandler::get_mouse_pos();
     float dist = (mouse_p.x - position.x) * (mouse_p.x - position.x) + (mouse_p.y - position.y) * (mouse_p.y - position.y);
-    return dist <= radius * radius;
+    return dist < radius * radius;
 }
-
