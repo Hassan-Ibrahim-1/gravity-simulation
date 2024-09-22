@@ -190,30 +190,39 @@ void InputHandler::mouse_button_callback(GLFWwindow* window, int button, int act
 
 bool InputHandler::mouse_button_down(MouseButton button) {
     if (button == MouseButton::ANY) {
-        if (_lmb_down) {
-            _lmb_down = false;
-            return true;
-        }
-        if (_rmb_down) {
-            _rmb_down = false;
-            return true;
-        }
-        return false;
+        return _lmb_down || _rmb_down;
     }
     else if (button == MouseButton::LEFT) {
-        if (_lmb_down) {
-            _lmb_down = false;
-            return true;
-        }
-        return false;
+        return _lmb_down;
     }
     else if (button == MouseButton::RIGHT) {
-        if (_rmb_down) {
-            _rmb_down = false;
-            return true;
-        }
-        return false;
+        return _rmb_down;
     }
+    /*if (button == MouseButton::ANY) {*/
+    /*    if (_lmb_down) {*/
+    /*        _lmb_down = false;*/
+    /*        return true;*/
+    /*    }*/
+    /*    if (_rmb_down) {*/
+    /*        _rmb_down = false;*/
+    /*        return true;*/
+    /*    }*/
+    /*    return false;*/
+    /*}*/
+    /*else if (button == MouseButton::LEFT) {*/
+    /*    if (_lmb_down) {*/
+    /*        _lmb_down = false;*/
+    /*        return true;*/
+    /*    }*/
+    /*    return false;*/
+    /*}*/
+    /*else if (button == MouseButton::RIGHT) {*/
+    /*    if (_rmb_down) {*/
+    /*        _rmb_down = false;*/
+    /*        return true;*/
+    /*    }*/
+    /*    return false;*/
+    /*}*/
     
     // never reached
     return false;

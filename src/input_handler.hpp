@@ -51,6 +51,9 @@ float get_mouse_pos_x();
 float get_mouse_pos_y();
 
 // NOTE: All these functions disable their bools if they are true on read
+// If checking if something is being clicked on check if the mouse is hovering on that thing
+// before calling one of these functions. idk why it's this way. if done otherwise 
+// any further checks won't work in the same frame? I think
 bool mouse_button_down(MouseButton button = MouseButton::ANY);
 bool mouse_button_clicked(MouseButton button = MouseButton::ANY);
 bool mouse_button_released(MouseButton button = MouseButton::ANY);
