@@ -1,5 +1,7 @@
 #include "GLFW/glfw3.h"
 
+#include <glm/gtc/matrix_transform.hpp>
+
 #include "globals.hpp"
 #include "settings.hpp"
 #include "camera.hpp"
@@ -62,10 +64,22 @@ void InputHandler::key_callback(GLFWwindow* window, int key, int scancode, int a
 }
 
 void InputHandler::mouse_movement_callback(GLFWwindow* window, double posx, double posy) {
+
     int width, height;
     glfwGetWindowSize(window, &width, &height);
-    Globals::mouse_pos.x = posx / width;
-    Globals::mouse_pos.y = posy / height;
+    /*Globals::mouse_pos.x = posx / width;*/
+    /*Globals::mouse_pos.y = posy / height;*/
+
+    glm::vec3 win(posx, posy, 0);
+    glm::vec4 viewport(0, 0, width, height);
+
+    glm::vec3 real_pos = glm::unProject(win, glm::mat4(1.0f), glm::mat4(1.0f), viewport);
+
+    float world_x = -real_pos.x;
+    float world_y = -real_pos.y;
+    Globals::mouse_pos.x = world_x;
+    Globals::mouse_pos.y = world_y;
+
     return;
 
     if (Settings::cursor_enabled) {

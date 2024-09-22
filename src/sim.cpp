@@ -60,6 +60,8 @@ void Sim::create_imgui_windows() {
         _start = true;
     }
 
+    ImGui::Text("mouse: (%.4f, %.4f)", Globals::mouse_pos.x, Globals::mouse_pos.y);
+
     ImGui::Text("Application average %.3f ms/frame (%.1f FPS)", 1000.0f / Globals::io->Framerate, Globals::io->Framerate);
     ImGui::End();
 
