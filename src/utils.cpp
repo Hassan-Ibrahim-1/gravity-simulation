@@ -1,6 +1,7 @@
 #include <ctime>
 
 #include "utils.hpp"
+#include "globals.hpp"
 
 void Utils::init() {
     srand (static_cast<unsigned> (time(0)));
@@ -36,5 +37,15 @@ float Utils::noise(int x, int y) {
     n = (n<<13) ^ n;
     return ( 1.0 - ( (n * (n * n * 15731 + 789221) + 1376312589)
     & 0x7fffffff) / 1073741824.0); 
+}
+
+bool Utils::mouse_in_circle(Circle& circle) {
+    return mouse_in_circle(circle.transform.position, circle.radius());
+}
+
+bool Utils::mouse_in_circle(glm::vec3 position, float radius) {
+    glm::vec2& mouse_p = Globals::mouse_pos;
+    float dist = (mouse_p.x - position.x) * (mouse_p.x - position.x) + (mouse_p.y - position.y) * (mouse_p.y - position.y);
+    return dist <= radius * radius;
 }
 

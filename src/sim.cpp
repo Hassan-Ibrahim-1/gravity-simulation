@@ -4,6 +4,7 @@
 
 #include "sim.hpp"
 #include "globals.hpp"
+#include "utils.hpp"
 
 void Sim::init() {
     spawn_initial_planets();
@@ -61,6 +62,16 @@ void Sim::create_imgui_windows() {
     }
 
     ImGui::Text("mouse: (%.4f, %.4f)", Globals::mouse_pos.x, Globals::mouse_pos.y);
+
+    if (Utils::mouse_in_circle(_planets[0].body)) {
+        ImGui::Text("mouse in planet 1 with radius: %.3f", _planets[0].body.radius());
+    }
+    else if (Utils::mouse_in_circle(_planets[1].body)) {
+        ImGui::Text("mouse in planet 2");
+    }
+    else {
+        ImGui::Text("mouse outside of any planets");
+    }
 
     ImGui::Text("Application average %.3f ms/frame (%.1f FPS)", 1000.0f / Globals::io->Framerate, Globals::io->Framerate);
     ImGui::End();

@@ -4,6 +4,7 @@
 #include "imgui.h"
 
 #include "transform.hpp"
+#include "circle.hpp"
 
 namespace Utils {
 
@@ -21,6 +22,9 @@ float noise(int x, int y);
 
 // TODO:
 void add_to_imgui(Transform& transform);
+
+bool mouse_in_circle(glm::vec3 position, float radius);
+bool mouse_in_circle(Circle& circle);
 
 }
 

@@ -12,8 +12,10 @@ public:
 
 private:
     std::vector<GravityObject> _planets;
-    float mass1 = 20000.0f;
-    float mass2 = 10000.0f;
+    /*float mass1 = 20000.0f;*/
+    /*float mass2 = 10000.0f;*/
+    float mass1 = 0;
+    float mass2 = 0;
 
     static constexpr float _gravity_constant = 0.0000001f;
 

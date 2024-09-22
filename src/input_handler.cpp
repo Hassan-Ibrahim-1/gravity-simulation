@@ -72,13 +72,10 @@ void InputHandler::mouse_movement_callback(GLFWwindow* window, double posx, doub
 
     glm::vec3 win(posx, posy, 0);
     glm::vec4 viewport(0, 0, width, height);
-
     glm::vec3 real_pos = glm::unProject(win, glm::mat4(1.0f), glm::mat4(1.0f), viewport);
 
-    float world_x = -real_pos.x;
-    float world_y = -real_pos.y;
-    Globals::mouse_pos.x = world_x;
-    Globals::mouse_pos.y = world_y;
+    Globals::mouse_pos.x = -real_pos.x;
+    Globals::mouse_pos.y = -real_pos.y;
 
     return;
 
