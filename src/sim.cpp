@@ -35,13 +35,6 @@ void Sim::run() {
 void Sim::create_base_imgui_window() {
 
     ImGui::Begin("gravity simulation");
-    /*ImGui::DragFloat("mass1", &mass1, 100.0f, 0.0f);*/
-    /*ImGui::DragFloat2("scale1", (float*)&_planets[0].body.transform.scale, 0.01f, -2.0f, 2.0f);*/
-    /**/
-    /*ImGui::DragFloat("mass2", &mass2, 100.0f, 0.0f);*/
-    /*ImGui::DragFloat2("position 2", (float*) &_planets[1].body.transform.position, 0.01f, -1.0f, 1.0f);*/
-    /*ImGui::DragFloat2("velocity1", (float*)&_planets[1].initial_velocity, 0.01f, -50.0f, 50.0f);*/
-    /*ImGui::DragFloat2("scale2", (float*)&_planets[1].body.transform.scale, 0.01f, -1.0f, 1.0f);*/
 
     ImGui::DragInt("time steps", &_time_steps, 1, 0);
 
@@ -61,16 +54,6 @@ void Sim::create_base_imgui_window() {
     }
 
     ImGui::Text("mouse: (%.4f, %.4f)", InputHandler::get_mouse_pos_x(), InputHandler::get_mouse_pos_y());
-
-    /*if (Utils::mouse_in_circle(_planets[0].body)) {*/
-    /*    ImGui::Text("mouse in planet 1 with radius: %.3f", _planets[0].body.radius());*/
-    /*    }*/
-    /*if (Utils::mouse_in_circle(_planets[1].body)) {*/
-    /*    ImGui::Text("mouse in planet 2 with radius: %.3f", _planets[1].body.radius());*/
-    /*}*/
-    /*else {*/
-    /*    ImGui::Text("mouse outside of any planets");*/
-    /*}*/
 
     ImGui::Text("Application average %.3f ms/frame (%.1f FPS)", 1000.0f / InputHandler::io->Framerate, InputHandler::io->Framerate);
     ImGui::End();
