@@ -158,6 +158,8 @@ void InputHandler::mouse_scroll_callback(GLFWwindow* window, double xoffset, dou
 }
 
 void InputHandler::mouse_button_callback(GLFWwindow* window, int button, int action, int mods) {
+    if (io->WantCaptureMouse) return;
+
     if (button == GLFW_MOUSE_BUTTON_LEFT) {
         if (action == GLFW_PRESS) {
             _lmb_down = true;
@@ -223,7 +225,7 @@ bool InputHandler::mouse_button_down(MouseButton button) {
     /*    }*/
     /*    return false;*/
     /*}*/
-    
+    /**/
     // never reached
     return false;
 }

@@ -26,7 +26,7 @@ inline float _rmb_release_start_time = 0.0f;
 /*static constexpr float _click_time_offset = 0.001f;;*/
 /*static constexpr float _release_time_offset = 0.001f;;*/
 // How long it should wait to discard mouse input if it hasn't been read
-static constexpr float _mouse_discard_wait_time = 0.7f;
+static constexpr float _mouse_discard_wait_time = 0.1f;
 
 
 // couldn't these just be _mouse_pos?

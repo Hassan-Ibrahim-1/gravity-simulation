@@ -1,5 +1,7 @@
 #include <GLFW/glfw3.h>
+#include <sstream>
 
+#include "gravity_object.hpp"
 #include "imgui.h"
 
 #include "input_handler.hpp"
@@ -12,46 +14,40 @@ void Sim::init() {
 }
 
 void Sim::run() {
-    create_imgui_windows();
-    // TODO: Treat position like this as well
-    _planets[0].mass = mass1;
-    _planets[1].mass = mass2;
+    create_base_imgui_window();
+    create_planet_windows();
 
     if (_start) {
-        glm::vec3 acceleration = calculate_acceleration(_planets[0], _planets[1]);
         float time = Globals::time_step;
-        acceleration = calculate_acceleration(_planets[1], _planets[0]);
+        glm::vec3 acceleration = calculate_acceleration(_planets[1], _planets[0]);
         _planets[1].velocity += acceleration * time;
         // TODO: have update render planets
         update();
         render_planets();
     }
-
     else {
         trace_predicted_paths(_planets[0], _planets[1]);
     }
 
+    poll_input();
 }
 
-void Sim::create_imgui_windows() {
+void Sim::create_base_imgui_window() {
 
     ImGui::Begin("gravity simulation");
-
-    ImGui::DragFloat("mass1", &mass1, 100.0f, 0.0f);
-    ImGui::DragFloat2("scale1", (float*)&_planets[0].body.transform.scale, 0.01f, -2.0f, 2.0f);
-
-    ImGui::DragFloat("mass2", &mass2, 100.0f, 0.0f);
-    ImGui::DragFloat2("position 2", (float*) &_planets[1].body.transform.position, 0.01f, -1.0f, 1.0f);
-    ImGui::DragFloat2("velocity1", (float*)&_planets[1].initial_velocity, 0.01f, -50.0f, 50.0f);
-    ImGui::DragFloat2("scale2", (float*)&_planets[1].body.transform.scale, 0.01f, -1.0f, 1.0f);
+    /*ImGui::DragFloat("mass1", &mass1, 100.0f, 0.0f);*/
+    /*ImGui::DragFloat2("scale1", (float*)&_planets[0].body.transform.scale, 0.01f, -2.0f, 2.0f);*/
+    /**/
+    /*ImGui::DragFloat("mass2", &mass2, 100.0f, 0.0f);*/
+    /*ImGui::DragFloat2("position 2", (float*) &_planets[1].body.transform.position, 0.01f, -1.0f, 1.0f);*/
+    /*ImGui::DragFloat2("velocity1", (float*)&_planets[1].initial_velocity, 0.01f, -50.0f, 50.0f);*/
+    /*ImGui::DragFloat2("scale2", (float*)&_planets[1].body.transform.scale, 0.01f, -1.0f, 1.0f);*/
 
     ImGui::DragInt("time steps", &_time_steps, 1, 0);
 
     if (ImGui::Button("reset")) {
-        _planets[0].body.transform.position = glm::vec3(0);
-        _planets[1].body.transform.position = glm::vec3(0.3f, 0, 0);
-        _planets[0].initial_velocity = glm::vec3(0);
-        _planets[1].initial_velocity = glm::vec3(0);
+        _planets[0].reset(glm::vec3(0));
+        _planets[1].reset(glm::vec3(0.3f, 0, 0));
     }
 
     if (_start) {
@@ -76,28 +72,50 @@ void Sim::create_imgui_windows() {
     /*    ImGui::Text("mouse outside of any planets");*/
     /*}*/
 
-    if (mouse_click_on_body(_planets[0])) {
-        ImGui::Text("planet 1 clicked!");
-        printf("planet 1 clicked\n");
-    }
-    if (Utils::mouse_in_circle(_planets[1].body)) {
-        ImGui::Text("HOVERING ON PLANET 2");
-        if (InputHandler::mouse_button_released(MouseButton::LEFT)) {
-            ImGui::Text("planet 2 clicked!");
-            printf("planet 2 clicked\n");
-        }
-    }
-
     ImGui::Text("Application average %.3f ms/frame (%.1f FPS)", 1000.0f / InputHandler::io->Framerate, InputHandler::io->Framerate);
     ImGui::End();
 
 }
 
+void Sim::create_planet_windows() {
+    for (size_t i = 0; i < _planets.size(); i++) {
+        if (_selected_planets[i]) {
+            GravityObject& planet = _planets[i];
+            std::stringstream title;
+            title << "Planet " << i;
+            bool tmp = _selected_planets[i];
+            ImGui::Begin(title.str().c_str(), (bool*)&tmp);
+            _selected_planets[i] = tmp;
+            ImGui::DragFloat2("position", (float*)&planet.body.transform.position, 0.01f, -1.0f, 1.0f);
+            ImGui::DragFloat2("scale", (float*)&planet.body.transform.scale, 0.01f, -1.0f, 1.0f);
+            ImGui::DragFloat("mass", &planet.mass, 100.0f, 0.0f);
+            ImGui::DragFloat2("initial velocity", (float*)&planet.initial_velocity, 0.01f, -50.0f, 50.0f);
+            ImGui::DragFloat2("current velocity", (float*)&planet.velocity, 0.01f, -50.0f, 50.0f);
+            ImGui::ColorEdit3("color", (float*)&planet.body.color);
+            ImGui::End();
+        }
+    }
+}
+
+void Sim::poll_input() {
+    for (size_t i = 0; i < _planets.size(); i++) {
+        // only check for selection if the planet hasn't already been selected
+        if (!_selected_planets[i]) {
+            if (mouse_click_on_body(_planets[i])) {
+                _selected_planets[i] = true;
+            }
+        }
+    }
+}
+
+void Sim::create_planet(GravityObject planet) {
+    _planets.push_back(planet);
+    _selected_planets.push_back(false);
+}
+
 void Sim::spawn_initial_planets() {
-    GravityObject g1 = GravityObject(Transform(glm::vec3(0), glm::vec3(0.2f, 0.2f, 1)), 1.0f, glm::vec3(0));
-    GravityObject g2 = GravityObject(Transform(glm::vec3(0.3, 0, 0), glm::vec3(0.2, 0.2, 1)));
-    _planets.push_back(g1);
-    _planets.push_back(g2);
+    create_planet(GravityObject(Circle(Transform(glm::vec3(0), glm::vec3(0.01f, 0.02f, 1)), glm::vec4(1, 0, 0, 1)), 0000000.0f, glm::vec3(0)));
+    create_planet(GravityObject(Transform(glm::vec3(0.3, 0, 0), glm::vec3(0.01, 0.02, 1)), 000000.0f));
 }
 
 void Sim::update() {
@@ -127,8 +145,8 @@ void Sim::trace_predicted_paths(GravityObject g1, GravityObject g2) {
 
     std::vector<Point> positions;
 
-    positions.push_back(Point(g2.body.transform.position, glm::vec4(1)));
-    positions.push_back(Point());
+    positions.push_back(Point(g1.body.transform.position, g1.body.color));
+    positions.push_back(Point(g2.body.transform.position, g2.body.color));
 
     for (int i = 0; i < _time_steps; i++) {
         glm::vec3 acceleration = calculate_acceleration(g1, g2);
@@ -139,7 +157,7 @@ void Sim::trace_predicted_paths(GravityObject g1, GravityObject g2) {
         /*g1.update();*/
         g2.update();
 
-        positions.push_back(Point(g1.body.transform.position, glm::vec4(1.0f, 0.0f, 0.0f, 1.0f)));
+        /*positions.push_back(Point(g1.body.transform.position, glm::vec4(1.0f, 0.0f, 0.0f, 1.0f)));*/
         positions.push_back(Point(g2.body.transform.position, glm::vec4(1)));
     }
     for (auto& position : positions) {
@@ -151,7 +169,6 @@ bool Sim::mouse_click_on_body(GravityObject& obj) {
     // NOTE: doesn't work if the if statements are switched for some reason
     if (Utils::mouse_in_circle(obj.body)) {
         if (InputHandler::mouse_button_released(MouseButton::LEFT)) {
-            /*printf("CIRCLE CLICKED\n");*/
             return true;
         }
     }

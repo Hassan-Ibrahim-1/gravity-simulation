@@ -1,6 +1,6 @@
 # Todo
+- Get velocity relative to one planet
 - Ability to add planets at runtime at position them as well
-- Click on planets to get info?
 - Check if mouse is in oval - can be done by checking if scale of x and y are different
 
 # Done
@@ -8,5 +8,5 @@
 - Trace predicted paths when stopped -- done
 - circle rendering -- done
 - Gravity object -- done
-- sim -- done
+- Click on planets to get info -- done
 

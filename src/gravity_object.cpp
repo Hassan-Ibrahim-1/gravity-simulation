@@ -3,8 +3,8 @@
 #include "gravity_object.hpp"
 #include "globals.hpp"
 
-GravityObject::GravityObject(Circle body, float mass, glm::vec3 velocity)
-    : body(body), mass(mass), initial_velocity(velocity) {}
+GravityObject::GravityObject(Circle body, float mass, glm::vec3 initial_velocity)
+    : body(body), mass(mass), initial_velocity(initial_velocity) {}
 
 void GravityObject::update() {
     float time = Globals::time_step;
@@ -16,5 +16,12 @@ void GravityObject::update() {
         return;
     }
     body.transform.position += velocity * time;
+}
+
+void GravityObject::reset(glm::vec3 position) {
+    body.transform.position = glm::vec3(0);
+    velocity = glm::vec3(0);
+    initial_velocity = glm::vec3(0);
+    _first_update = true;
 }
 
