@@ -19,3 +19,27 @@ glm::mat4 Transform::get_mat4() {
     return mat;
 }
 
+bool operator==(const Rotation& r1, const Rotation& r2) {
+    return (r1.yaw == r2.yaw)
+        && (r1.pitch == r2.pitch)
+        && (r1.roll == r2.roll);
+}
+
+bool operator!=(const Rotation& r1, const Rotation& r2) {
+    return (r1.yaw != r2.yaw)
+        || (r1.pitch != r2.pitch)
+        || (r1.roll != r2.roll);
+}
+
+bool operator==(const Transform& t1, const Transform& t2) {
+    return (t1.position == t2.position)
+        && (t1.scale == t2.scale)
+        && (t1.rotation == t2.rotation);
+}
+
+bool operator!=(const Transform& t1, const Transform& t2) {
+    return (t1.position != t2.position)
+        || (t1.scale != t2.scale)
+        || (t1.rotation != t2.rotation);
+}
+

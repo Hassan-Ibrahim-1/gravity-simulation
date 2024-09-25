@@ -26,3 +26,12 @@ float Circle::radius() {
     return abs(radius);
 }
 
+bool operator==(const Circle& c1, const Circle& c2) {
+    return (c1.transform == c2.transform)
+        && (c1.color == c2.color);
+}
+bool operator!=(const Circle& c1, const Circle& c2) {
+    return (c1.transform != c2.transform)
+        || (c1.color != c2.color);
+}
+

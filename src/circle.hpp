@@ -11,5 +11,8 @@ struct Circle {
 
     float radius();
     void render();
+    
+    friend bool operator==(const Circle& c1, const Circle& c2);
+    friend bool operator!=(const Circle& c1, const Circle& c2);
 };
 
