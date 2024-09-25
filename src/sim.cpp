@@ -24,19 +24,12 @@ void Sim::run() {
     }
 
     if (_start) {
-        /*float time = Globals::time_step;*/
-        /*glm::vec3 acceleration = calculate_acceleration(_planets[1], _planets[0]);*/
-        /*_planets[1].velocity += acceleration * time;*/
-        /*acceleration = calculate_acceleration(_planets[0], _planets[1]);*/
-        /*_planets[0].velocity += acceleration * time;*/
-        // TODO: have update render planets
         update();
         render_planets();
     }
     else {
         update_predicted_paths();
         render_predicted_paths();
-        /*trace_predicted_paths();*/
     }
 
     poll_input();
@@ -82,15 +75,12 @@ void Sim::create_planet_windows() {
         GravityObject& planet = _planets[i];
         if (planet.selected) {
             std::stringstream title;
-            title << "Planet " << i;
+            title << "Planet " << i + 1;
             ImGui::Begin(title.str().c_str(), &planet.selected);
             ImGui::DragFloat2("position", (float*)&planet.body.transform.position, 0.01f, -1.0f, 1.0f);
             ImGui::DragFloat2("scale", (float*)&planet.body.transform.scale, 0.01f, -1.0f, 1.0f);
             ImGui::DragFloat("mass", &planet.mass, 100.0f, 0.0f);
-            /*ImGui::DragFloat2("initial velocity", (float*)&planet.initial_velocity, 0.01f, -50.0f, 50.0f);*/
-            /*glm::vec3 tmpv = planet.velocity;*/
             ImGui::DragFloat2("current velocity", (float*)&planet.velocity, 0.001f, -50.0f, 50.0f);
-            /*planet.velocity = tmpv / 100.0f;*/
             ImGui::ColorEdit3("color", (float*)&planet.body.color);
             if (ImGui::Button("delete")) {
                 _planets.erase(_planets.begin() + i);
@@ -104,13 +94,8 @@ void Sim::create_planet_selection_window() {
     static int current_item = 0;
 
     ImGui::Begin("planets", &_selection_window_open);
-    /*printf("%s\n", ss.str().c_str());*/
-    /*std::cout << ss.str() << '\n';*/
-    /*std::string test = ss.str();*/
-    /*planet_names[i] = test.c_str();*/
 
     std::vector<std::string> tmp_names;
-    /*const char* planet_names[_planets.size()];*/
     std::vector<const char*> planet_names;
     // TODO: Calculate this only when new planets are added
     for (size_t i = 0; i < _planets.size(); i++) {
@@ -159,7 +144,6 @@ void Sim::update() {
 }
 
 void Sim::render_planets() {
-    /*_planets[0].body.render();*/
     for (GravityObject& planet : _planets) {
         planet.body.render();
     }
@@ -180,8 +164,6 @@ void Sim::update_predicted_paths() {
     for (const auto& planet : planets) {
         _traced_positions.push_back(Point(planet.body.transform.position, planet.body.color));
     }
-    /*_traced_positions.push_back(Point(g1.body.transform.position, g1.body.color));*/
-    /*_traced_positions.push_back(Point(g2.body.transform.position, g2.body.color));*/
 
     for (int i = 0; i < _time_steps; i++) {
         for (auto& planet : planets) {
@@ -191,16 +173,6 @@ void Sim::update_predicted_paths() {
             planet.update_position();
             _traced_positions.push_back(Point(planet.body.transform.position, planet.body.color));
         }
-        /*glm::vec3 acceleration = calculate_acceleration(g1, g2);*/
-        /*g1.velocity += (acceleration) * time;*/
-        /*acceleration = calculate_acceleration(g2, g1);*/
-        /*g2.velocity += acceleration * time;*/
-        /**/
-        /*g1.update_velocity();*/
-        /*g2.update_velocity();*/
-        /**/
-        /*_traced_positions.push_back(Point(g1.body.transform.position, glm::vec4(1.0f, 0.0f, 0.0f, 1.0f)));*/
-        /*_traced_positions.push_back(Point(g2.body.transform.position, glm::vec4(1)));*/
     }
 }
 

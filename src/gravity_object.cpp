@@ -10,14 +10,6 @@ GravityObject::GravityObject(Circle body, float mass, glm::vec3 initial_velocity
 void GravityObject::update_velocity(std::vector<GravityObject>& planets) {
     float time = Globals::time_step;
 
-    /*if (_first_update) {*/
-    /*    initial_velocity /= 100.0f;*/
-    /*    velocity = initial_velocity;*/
-    /*    body.transform.position += velocity * time;*/
-    /*    _first_update = false;*/
-    /*    return;*/
-    /*}*/
-
     for (const GravityObject& planet : planets) {
         if (planet == *this) {
             continue;
@@ -36,11 +28,10 @@ void GravityObject::update_position() {
 void GravityObject::reset(glm::vec3 position) {
     body.transform.position = glm::vec3(0);
     velocity = glm::vec3(0);
-    /*initial_velocity = glm::vec3(0);*/
-    /*_first_update = true;*/
 }
 
 glm::vec3 GravityObject::calculate_acceleration(const GravityObject& other) {
+    // (Gm1m2 / r^2) / m1
     glm::vec3 dist = other.body.transform.position - this->body.transform.position;
     float sqr_dist = glm::length(dist * dist);
     glm::vec3 force_dir = glm::normalize((other.body.transform.position - this->body.transform.position));

@@ -1,7 +1,6 @@
-#include <cmath>
-#include <glm/gtc/matrix_transform.hpp>
-
 #include <glad/glad.h>
+#include <glm/gtc/matrix_transform.hpp>
+#include <cmath>
 
 #include "renderer.hpp"
 #include "transform.hpp"
@@ -29,11 +28,6 @@ void Renderer::draw_point(glm::vec3 position, glm::vec4 color) {
     _points.push_back(Point(position, color));
 }
 
-void Renderer::reload_shaders() {
-    printf("Reloading shaders\n");
-    shaders.point.reload();
-}
-
 void Renderer::draw_rect(Rect& rect, DrawMode draw_mode) {
     _rects.push_back(rect);
     _rect_draw_modes.push_back(draw_mode);
@@ -45,6 +39,11 @@ void Renderer::draw_circle(Circle& circle) {
 
 void Renderer::draw_circle(glm::vec3 position, glm::vec4 color) {
     _circles.push_back(Circle(position, color));
+}
+
+void Renderer::reload_shaders() {
+    printf("Reloading shaders\n");
+    shaders.point.reload();
 }
 
 void Renderer::render() {
@@ -144,16 +143,10 @@ void Renderer::generate_circle_vertices() {
     static constexpr float two_pi = M_PI * 2;
     static constexpr float radius = 0.5f;
 
-    /*_circle_vertices.push_back(_circle_start.x);*/
-    /*_circle_vertices.push_back(_circle_start.y);*/
-
     for (size_t i = 0; i < _n_circle_segments; i++) {
         // x, y, z
-        /*float angle = 2.0f * M_PI * i / _n_circle_segments;*/
         _circle_vertices.push_back(_circle_start.x + radius * cos((float) i / _n_circle_segments * two_pi));
         _circle_vertices.push_back(_circle_start.y + radius * sin((float) i / _n_circle_segments * two_pi));
-        /*_circle_vertices.push_back(_circle_start.x + cos(angle) * radius);*/
-        /*_circle_vertices.push_back(_circle_start.y + sin(angle) * radius);*/
         _circle_vertices.push_back(0);
     }
 }

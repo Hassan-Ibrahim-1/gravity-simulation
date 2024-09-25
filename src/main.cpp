@@ -76,10 +76,6 @@ int main() {
     Camera& camera = Globals::camera;
     camera = Camera(glm::vec3(0.0f, 0.0f, 1.0f));
 
-    glm::vec3 position(0);
-    glm::vec3 scale(0.5, 0.73, 0);
-    glm::vec4 color(1);
-
     Sim sim;
     sim.init();
 

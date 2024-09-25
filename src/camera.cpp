@@ -1,5 +1,4 @@
 #include <glm/gtc/matrix_transform.hpp>
-#include <pthread.h>
 
 #include "camera.hpp"
 #include "transform.hpp"
@@ -13,11 +12,6 @@ Camera::Camera(Transform transform, glm::vec3 world_up)
 
 Camera::Camera(glm::vec3 position, Rotation rotation, glm::vec3 scale, glm::vec3 world_up)
     : Camera(Transform(position, scale, rotation), world_up) {}
-/*    : transform(position, rotation, scale),*/
-/*      world_up(world_up),*/
-/*      up(world_up) {*/
-/*    update_camera_vectors();*/
-/*}*/
 
 Camera::Camera(float pos_x,
                float pos_y,
