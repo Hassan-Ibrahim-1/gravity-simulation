@@ -47,7 +47,7 @@ void Sim::create_base_imgui_window() {
 
     if (ImGui::Button("Add planet")) {
         GravityObject& p = create_planet(GravityObject(Circle(Transform(glm::vec3(0), _default_scale),
-                                            glm::vec4(1, 0, 0, 1)), 0.0f, glm::vec3(0)));
+                                            glm::vec4(1, 1, 1, 1))));
         p.selected = true;
     }
 
@@ -148,8 +148,8 @@ GravityObject& Sim::create_planet(GravityObject planet) {
 
 void Sim::spawn_initial_planets() {
     create_planet(GravityObject(Circle(Transform(glm::vec3(0), _default_scale),
-                                       glm::vec4(1, 0, 0, 1)), 0000000.0f, glm::vec3(0)));
-    create_planet(GravityObject(Transform(glm::vec3(0.3, 0, 0), _default_scale), 000000.0f));
+                                       glm::vec4(1, 0, 0, 1))));
+    create_planet(GravityObject(Transform(glm::vec3(0.3, 0, 0), _default_scale)));
 }
 
 void Sim::update() {
