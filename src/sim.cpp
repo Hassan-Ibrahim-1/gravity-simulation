@@ -54,8 +54,9 @@ void Sim::create_base_imgui_window() {
     ImGui::DragInt("time steps", &_time_steps, 1, 0);
 
     if (ImGui::Button("reset")) {
-        _planets[0].reset(glm::vec3(0));
-        _planets[1].reset(glm::vec3(0.3f, 0, 0));
+        for (auto& p : _planets) {
+            p.reset();
+        }
     }
 
     if (_start) {
@@ -91,6 +92,9 @@ void Sim::create_planet_windows() {
             ImGui::DragFloat2("current velocity", (float*)&planet.velocity, 0.001f, -50.0f, 50.0f);
             /*planet.velocity = tmpv / 100.0f;*/
             ImGui::ColorEdit3("color", (float*)&planet.body.color);
+            if (ImGui::Button("delete")) {
+                _planets.erase(_planets.begin() + i);
+            }
             ImGui::End();
         }
     }
