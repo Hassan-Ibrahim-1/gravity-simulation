@@ -121,16 +121,13 @@ int main() {
         glm::mat4 view = camera.get_view_matrix();
         renderer.set_view_matrix(view);
 
-        /*sim.run();*/
+        sim.run();
 
-        /*Circle c(glm::vec3(0));*/
-        /*renderer.draw_circle(c);*/
-
-        Line line((Point(pos1, glm::vec4(color, 1))), Point(pos2, glm::vec4(color, 1)));
-        renderer.draw_line(line);
-
-        Line line2(Point(glm::vec3(-0.2), glm::vec4(1)), Point(glm::vec3(-0.1, -0.1, 0), glm::vec4(1, 0, 0, 1)));
-        renderer.draw_line(line2);
+        /*Line line((Point(pos1, glm::vec4(color, 1))), Point(pos2, glm::vec4(color, 1)));*/
+        /*renderer.draw_line(line);*/
+        /**/
+        /*Line line2(Point(glm::vec3(-0.2), glm::vec4(1)), Point(glm::vec3(-0.1, -0.1, 0), glm::vec4(1, 0, 0, 1)));*/
+        /*renderer.draw_line(line2);*/
 
         renderer.render();
 
