@@ -142,6 +142,10 @@ void Sim::update() {
     for (GravityObject& planet : _planets) {
         planet.update_velocity(_planets);
     }
+
+    for (GravityObject& planet : _planets) {
+        planet.update_position();
+    }
 }
 
 void Sim::render_planets() {
@@ -162,17 +166,10 @@ void Sim::render_predicted_paths() {
     }
 
     render_planets();
-
-    /*for (auto& position : _traced_positions) {*/
-    /*    Globals::renderer->draw_point(position);*/
-    /*}*/
 }
 
 void Sim::update_predicted_paths() {
     _traced_positions.clear();
-
-    float time = Globals::time_step;
-
     std::vector<GravityObject> planets = _planets;
     
     for (size_t i = 0; i < _planets.size(); i++) {
@@ -180,10 +177,7 @@ void Sim::update_predicted_paths() {
         _traced_positions[i].push_back(Point(planets[i].body.transform.position, planets[i].body.color));
     }
 
-    /*time *= _time_steps; */
-    /*time = 1;*/
-
-    for (int i = 0; i < _time_steps; i++) {
+    for (size_t i = 0; i < _time_steps; i++) {
         for (auto& planet : planets) {
             planet.update_velocity(planets);
         }

@@ -21,8 +21,7 @@ void GravityObject::update_velocity(std::vector<GravityObject>& planets) {
 }
 
 void GravityObject::update_position() {
-    float time = 1;
-    body.transform.position += velocity * Globals::time_step * 1.0f;
+    body.transform.position += velocity * Globals::time_step;
 }
 
 void GravityObject::reset(glm::vec3 position) {
