@@ -79,6 +79,10 @@ int main() {
     Sim sim;
     sim.init();
 
+    glm::vec3 pos1(0);
+    glm::vec3 pos2(0.1f);
+
+
     while (!glfwWindowShouldClose(window.data())) {
         float current_frame = glfwGetTime();
         delta_time = current_frame - last_frame;
@@ -105,14 +109,24 @@ int main() {
         ImGui_ImplGlfw_NewFrame();
         ImGui::NewFrame();
 
+        ImGui::Begin("Line test");
+        ImGui::DragFloat2("pos1", (float*)&pos1, 0.01f, -1.0f, 1.0f);
+        ImGui::DragFloat2("pos2", (float*)&pos2, 0.01f, -1.0f, 1.0f);
+        ImGui::End();
+
         glClearColor(0.1f, 0.1f, 0.1f, 1.0f);
         glClear(GL_DEPTH_BUFFER_BIT | GL_COLOR_BUFFER_BIT);
 
         glm::mat4 view = camera.get_view_matrix();
-        renderer.shaders.point.use();
-        renderer.shaders.point.set_mat4("view", view);
+        renderer.set_view_matrix(view);
 
-        sim.run();
+        /*sim.run();*/
+
+        /*Circle c(glm::vec3(0));*/
+        /*renderer.draw_circle(c);*/
+
+        Line line((Point(pos1)), Point(pos2));
+        renderer.draw_line(line);
 
         renderer.render();
 

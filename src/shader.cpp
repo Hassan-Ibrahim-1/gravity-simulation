@@ -105,7 +105,9 @@ void Shader::use() {
         glUseProgram(ID);
     }
     else {
-        ErrorHandler::error("Shader not loaded\n");
+        std::stringstream ss;
+        ss << "Shader with paths '" << _vertex_path << ", " << _fragment_path << "' not loaded";
+        ErrorHandler::error(ss.str(), "Shader::use");
     }
 }
 
@@ -126,7 +128,7 @@ std::string Shader::get_file_contents(const char* path) {
     catch (std::ifstream::failure e) {
         std::stringstream ss;
         ss << "Bad file read: " << e.what() << "\ncode:\n" << e.code() << '\n';
-        ErrorHandler::error(ss.str());
+        ErrorHandler::error(ss.str(), "Shader::get_file_contents");
         std::exit(-1);
     }
 

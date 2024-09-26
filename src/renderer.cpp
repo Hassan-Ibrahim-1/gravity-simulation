@@ -1,8 +1,11 @@
+#include <array>
 #include <glad/glad.h>
 #include <glm/gtc/matrix_transform.hpp>
 #include <cmath>
 
 #include "renderer.hpp"
+#include "error_handler.hpp"
+#include "globals.hpp"
 #include "transform.hpp"
 
 Renderer::Renderer() {
@@ -41,18 +44,42 @@ void Renderer::draw_circle(glm::vec3 position, glm::vec4 color) {
     _circles.push_back(Circle(position, color));
 }
 
+void Renderer::draw_line(Line& line) {
+    point_to_screen_space(line.p1);
+    point_to_screen_space(line.p2);
+    _lines.push_back(line);
+    push_line_verts(line);
+}
+
+void Renderer::draw_line(Point p1, Point p2) {
+    point_to_screen_space(p1);
+    point_to_screen_space(p2);
+    Line line(p1, p1);
+    _lines.push_back(line);
+    push_line_verts(line);
+}
+
 void Renderer::reload_shaders() {
     printf("Reloading shaders\n");
     shaders.point.reload();
+    shaders.line.reload();
+}
+
+void Renderer::set_view_matrix(glm::mat4& view) {
+    shaders.point.use();
+    shaders.point.set_mat4("view", view);
+    shaders.line.use();
+    shaders.line.set_mat4("view", view);
 }
 
 void Renderer::render() {
+    update_vbos();
+
     shaders.point.use();
 
     glBindVertexArray(_points_vao);
-
     for (Point& point : _points) {
-        glm::mat4 model = point.transform.get_mat4();
+        glm::mat4 model = point.mat4();
         shaders.point.set_mat4("model", model);
         shaders.point.set_vec4("color", point.color);
         glDrawArrays(GL_POINTS, 0, _points.size());
@@ -63,9 +90,7 @@ void Renderer::render() {
         Rect& rect = _rects[i];
         DrawMode draw_mode = _rect_draw_modes[i];
 
-        glm::mat4 model(1);
-        model = glm::translate(model, rect.transform.position);
-        model = glm::scale(model, rect.transform.scale);
+        glm::mat4 model = rect.transform.get_mat4();
         shaders.point.set_mat4("model", model);
         shaders.point.set_vec4("color", rect.color);
 
@@ -86,16 +111,26 @@ void Renderer::render() {
         glDrawArrays(GL_TRIANGLE_FAN, 0, _n_circle_segments + 2);
     }
 
+    glBindVertexArray(_lines_vao);
+    for (Line& line : _lines) {
+        shaders.line.use();
+        shaders.line.set_vec4("color", line.color);
+        glDrawArrays(GL_LINES, 0, _lines.size() * 2);
+    }
+
     _points.clear();
     _rects.clear();
     _rect_draw_modes.clear();
     _circles.clear();
+    _lines.clear();
+    _line_verts.clear();
 }
 
 void Renderer::init_vbos() {
     glGenBuffers(1, &_points_vbo);
     glGenBuffers(1, &_rects_vbo);
     glGenBuffers(1, &_circles_vbo);
+    glGenBuffers(1, &_lines_vbo);
 }
 
 void Renderer::init_vaos() {
@@ -123,6 +158,8 @@ void Renderer::init_vaos() {
     glVertexAttribPointer(0, 3, GL_FLOAT, false, sizeof(float) * 3, (void*)0);
     glEnableVertexAttribArray(0);
 
+    glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, 0);
+
     // circles
     glGenVertexArrays(1, &_circles_vao);
     glBindVertexArray(_circles_vao);
@@ -133,10 +170,40 @@ void Renderer::init_vaos() {
 
     glVertexAttribPointer(0, 3, GL_FLOAT, false, sizeof(float) * 3, (void*)0);
     glEnableVertexAttribArray(0);
+
+    glGenVertexArrays(1, &_lines_vao);
+    glBindVertexArray(_lines_vao);
+
+    // data is sent every frame
+    glBindBuffer(GL_ARRAY_BUFFER, _lines_vbo);
+    /*auto* verts = new std::array<float, 2> {*/
+    /*    0.0f, 0.1f*/
+    /*};*/
+
+    /*glBufferData(GL_ARRAY_BUFFER, sizeof(float) * 4 * _lines.size(), _lines.data(), GL_DYNAMIC_DRAW);*/
+    glBufferData(GL_ARRAY_BUFFER, sizeof(float) *  _line_verts.size(), _line_verts.data(), GL_DYNAMIC_DRAW);
+    /*glBufferSubData(GL_ARRAY_BUFFER, sizeof(float) * verts->size(), verts->data(), GL_STATIC_DRAW);*/
+
+    glVertexAttribPointer(0, 2, GL_FLOAT, false, sizeof(float) * 2, (void*)0);
+    glEnableVertexAttribArray(0);
+}
+
+void Renderer::update_vbos() {
+    /*glBindVertexArray(_lines_vao);*/
+    glBindBuffer(GL_ARRAY_BUFFER, _lines_vbo);
+    /*_lines.data()*/
+    glBufferData(GL_ARRAY_BUFFER, sizeof(float) *  _line_verts.size(), _line_verts.data(), GL_DYNAMIC_DRAW);
+    glBindVertexArray(0);
+    /*glBufferSubData(GL_ARRAY_BUFFER, 0, _lines.size() * 2 * sizeof(float), _lines.data());*/
 }
 
 void Renderer::init_shaders() {
     shaders.point.load("shaders/point_shader.vert", "shaders/point_shader.frag");
+    shaders.line.load("shaders/line_shader.vert", "shaders/line_shader.frag");
+
+    if (ErrorHandler::had_error) {
+        std::exit(-1);
+    }
 }
 
 void Renderer::generate_circle_vertices() {
@@ -149,5 +216,19 @@ void Renderer::generate_circle_vertices() {
         _circle_vertices.push_back(_circle_start.y + radius * sin((float) i / _n_circle_segments * two_pi));
         _circle_vertices.push_back(0);
     }
+}
+
+Point& Renderer::point_to_screen_space(Point& point) {
+    point.position =
+        Globals::camera.get_view_matrix() * point.mat4() * glm::vec4(0, 0, 0, 1.0f);
+    return point;
+}
+
+void Renderer::push_line_verts(Line& line) {
+    _line_verts.push_back(line.p1.position.x);
+    _line_verts.push_back(line.p1.position.y);
+    _line_verts.push_back(line.p2.position.x);
+    _line_verts.push_back(line.p2.position.y);
+
 }
 

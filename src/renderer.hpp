@@ -18,6 +18,7 @@ public:
     struct Shaders {
         Shaders() = default;
         Shader point;
+        Shader line;
     } shaders;
 
     Renderer();
@@ -31,21 +32,25 @@ public:
 
     void draw_circle(Circle& circle);
     void draw_circle(glm::vec3 position, glm::vec4 color);
-    void init_vaos();
+
+    void draw_line(Line& line);
+    void draw_line(Point p1, Point p2);
 
     void reload_shaders();
+
+    void set_view_matrix(glm::mat4& view);
 
     // Actually render all draw calls
     void render();
 
 private:
     std::vector<Point> _points;
-
     std::vector<Rect> _rects;
     std::vector<DrawMode> _rect_draw_modes;
-
     std::vector<Circle> _circles;
     /*std::vector<DrawMode> _circle_draw_modes;*/
+    std::vector<Line> _lines;
+    std::vector<float> _line_verts;
 
     uint _points_vao;
     uint _points_vbo;
@@ -56,6 +61,9 @@ private:
 
     uint _circles_vao;
     uint _circles_vbo;
+
+    uint _lines_vao;
+    uint _lines_vbo;
 
     static constexpr std::array<uint, 8> _rect_outline_indices = {
         0, 1,
@@ -88,10 +96,17 @@ private:
     void push_point_color(glm::vec4& color);
 
     void init_vbos();
-    // void update_vaos();
-    // initializes shaders needed by the renderer
+    void init_vaos();
+    void update_vbos();
+
     void init_shaders();
 
-    // assumes radius is 0.5 and that 0, 0, 0 is the starting position
+    // TODO: Add this type of function for everything else
+    void render_lines();
+
+    // utils
+    Point& point_to_screen_space(Point& point);
+    
+    void push_line_verts(Line& line);
 };
 
