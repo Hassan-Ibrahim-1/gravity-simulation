@@ -7,8 +7,7 @@
 struct Line {
     Point p1;
     Point p2;
-    glm::vec4 color;
 
-    Line(Point p1, Point p2, glm::vec4 color = glm::vec4(1));
+    Line(Point p1, Point p2);
 };
 

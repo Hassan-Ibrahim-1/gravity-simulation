@@ -50,7 +50,7 @@ private:
     std::vector<Circle> _circles;
     /*std::vector<DrawMode> _circle_draw_modes;*/
     std::vector<Line> _lines;
-    std::vector<float> _line_verts;
+    std::vector<float> _line_data;
 
     uint _points_vao;
     uint _points_vbo;
@@ -107,6 +107,7 @@ private:
     // utils
     Point& point_to_screen_space(Point& point);
     
-    void push_line_verts(Line& line);
+    void push_line_data(Line& line);
+    void push_point_data(Point& p);
 };
 

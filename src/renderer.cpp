@@ -48,7 +48,7 @@ void Renderer::draw_line(Line& line) {
     point_to_screen_space(line.p1);
     point_to_screen_space(line.p2);
     _lines.push_back(line);
-    push_line_verts(line);
+    push_line_data(line);
 }
 
 void Renderer::draw_line(Point p1, Point p2) {
@@ -56,7 +56,7 @@ void Renderer::draw_line(Point p1, Point p2) {
     point_to_screen_space(p2);
     Line line(p1, p1);
     _lines.push_back(line);
-    push_line_verts(line);
+    push_line_data(line);
 }
 
 void Renderer::reload_shaders() {
@@ -114,7 +114,6 @@ void Renderer::render() {
     glBindVertexArray(_lines_vao);
     for (Line& line : _lines) {
         shaders.line.use();
-        shaders.line.set_vec4("color", line.color);
         glDrawArrays(GL_LINES, 0, _lines.size() * 2);
     }
 
@@ -123,7 +122,7 @@ void Renderer::render() {
     _rect_draw_modes.clear();
     _circles.clear();
     _lines.clear();
-    _line_verts.clear();
+    _line_data.clear();
 }
 
 void Renderer::init_vbos() {
@@ -181,18 +180,20 @@ void Renderer::init_vaos() {
     /*};*/
 
     /*glBufferData(GL_ARRAY_BUFFER, sizeof(float) * 4 * _lines.size(), _lines.data(), GL_DYNAMIC_DRAW);*/
-    glBufferData(GL_ARRAY_BUFFER, sizeof(float) *  _line_verts.size(), _line_verts.data(), GL_DYNAMIC_DRAW);
+    glBufferData(GL_ARRAY_BUFFER, sizeof(float) *  _line_data.size(), _line_data.data(), GL_DYNAMIC_DRAW);
     /*glBufferSubData(GL_ARRAY_BUFFER, sizeof(float) * verts->size(), verts->data(), GL_STATIC_DRAW);*/
 
-    glVertexAttribPointer(0, 2, GL_FLOAT, false, sizeof(float) * 2, (void*)0);
+    glVertexAttribPointer(0, 2, GL_FLOAT, false, sizeof(float) * 6, (void*)0);
     glEnableVertexAttribArray(0);
+    glVertexAttribPointer(1, 4, GL_FLOAT, false, sizeof(float) * 6, (void*)(sizeof(float) * 2));
+    glEnableVertexAttribArray(1);
 }
 
 void Renderer::update_vbos() {
     /*glBindVertexArray(_lines_vao);*/
     glBindBuffer(GL_ARRAY_BUFFER, _lines_vbo);
     /*_lines.data()*/
-    glBufferData(GL_ARRAY_BUFFER, sizeof(float) *  _line_verts.size(), _line_verts.data(), GL_DYNAMIC_DRAW);
+    glBufferData(GL_ARRAY_BUFFER, sizeof(float) *  _line_data.size(), _line_data.data(), GL_DYNAMIC_DRAW);
     glBindVertexArray(0);
     /*glBufferSubData(GL_ARRAY_BUFFER, 0, _lines.size() * 2 * sizeof(float), _lines.data());*/
 }
@@ -224,11 +225,17 @@ Point& Renderer::point_to_screen_space(Point& point) {
     return point;
 }
 
-void Renderer::push_line_verts(Line& line) {
-    _line_verts.push_back(line.p1.position.x);
-    _line_verts.push_back(line.p1.position.y);
-    _line_verts.push_back(line.p2.position.x);
-    _line_verts.push_back(line.p2.position.y);
+void Renderer::push_line_data(Line& line) {
+    push_point_data(line.p1);
+    push_point_data(line.p2);
+}
 
+void Renderer::push_point_data(Point& p) {
+    _line_data.push_back(p.position.x);
+    _line_data.push_back(p.position.y);
+    _line_data.push_back(p.color.r);
+    _line_data.push_back(p.color.g);
+    _line_data.push_back(p.color.b);
+    _line_data.push_back(p.color.a);
 }
 

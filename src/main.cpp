@@ -81,7 +81,7 @@ int main() {
 
     glm::vec3 pos1(0);
     glm::vec3 pos2(0.1f);
-
+    glm::vec3 color(1);
 
     while (!glfwWindowShouldClose(window.data())) {
         float current_frame = glfwGetTime();
@@ -112,6 +112,7 @@ int main() {
         ImGui::Begin("Line test");
         ImGui::DragFloat2("pos1", (float*)&pos1, 0.01f, -1.0f, 1.0f);
         ImGui::DragFloat2("pos2", (float*)&pos2, 0.01f, -1.0f, 1.0f);
+        ImGui::ColorEdit3("color", (float*)&color);
         ImGui::End();
 
         glClearColor(0.1f, 0.1f, 0.1f, 1.0f);
@@ -125,8 +126,11 @@ int main() {
         /*Circle c(glm::vec3(0));*/
         /*renderer.draw_circle(c);*/
 
-        Line line((Point(pos1)), Point(pos2));
+        Line line((Point(pos1, glm::vec4(color, 1))), Point(pos2, glm::vec4(color, 1)));
         renderer.draw_line(line);
+
+        Line line2(Point(glm::vec3(-0.2), glm::vec4(1)), Point(glm::vec3(-0.1, -0.1, 0), glm::vec4(1, 0, 0, 1)));
+        renderer.draw_line(line2);
 
         renderer.render();
 
