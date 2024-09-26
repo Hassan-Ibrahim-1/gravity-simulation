@@ -127,6 +127,7 @@ void Sim::poll_input() {
 }
 
 GravityObject& Sim::create_planet(GravityObject planet) {
+    planet.selected = true;
     _planets.push_back(planet);
     return _planets.back();
 }
@@ -154,9 +155,13 @@ void Sim::render_predicted_paths() {
         return;
     }
 
-    for (size_t i = 0; i < _traced_positions.size() - 1; i++) {
-        Globals::renderer->draw_line(_traced_positions[i], _traced_positions[i+1]);
+    for (size_t i = 0; i < _traced_positions.size(); i++) {
+        for (size_t j = 0; j < _traced_positions[i].size() - 1; j++) {
+            Globals::renderer->draw_line(_traced_positions[i][j], _traced_positions[i][j+1]);
+        }
     }
+
+    render_planets();
 
     /*for (auto& position : _traced_positions) {*/
     /*    Globals::renderer->draw_point(position);*/
@@ -165,12 +170,14 @@ void Sim::render_predicted_paths() {
 
 void Sim::update_predicted_paths() {
     _traced_positions.clear();
+
     float time = Globals::time_step;
 
     std::vector<GravityObject> planets = _planets;
     
-    for (const auto& planet : planets) {
-        _traced_positions.push_back(Point(planet.body.transform.position, planet.body.color));
+    for (size_t i = 0; i < _planets.size(); i++) {
+        _traced_positions.push_back(std::vector<Point>());
+        _traced_positions[i].push_back(Point(planets[i].body.transform.position, planets[i].body.color));
     }
 
     /*time *= _time_steps; */
@@ -180,9 +187,9 @@ void Sim::update_predicted_paths() {
         for (auto& planet : planets) {
             planet.update_velocity(planets);
         }
-        for (auto& planet : planets) {
-            planet.update_position();
-            _traced_positions.push_back(Point(planet.body.transform.position, planet.body.color));
+        for (size_t i = 0; i < planets.size(); i++) {
+            planets[i].update_position();
+            _traced_positions[i].push_back(Point(planets[i].body.transform.position, planets[i].body.color));
         }
     }
 }

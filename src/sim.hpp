@@ -13,7 +13,8 @@ public:
 
 private:
     std::vector<GravityObject> _planets;
-    std::vector<Point> _traced_positions;
+    // Each vector corresponds to its planet
+    std::vector<std::vector<Point>> _traced_positions;
     // planet used as a reference for relative velocity
     GravityObject* _main_planet = nullptr;
     /*float mass1 = 20000.0f;*/
@@ -22,8 +23,7 @@ private:
     static constexpr glm::vec3 _default_scale = glm::vec3(0.01, 0.02, 1);
 
     bool _start = false;
-    int _time_steps = 500;
-
+    int _time_steps = 1000;
     bool _selection_window_open = true;
 
     void create_base_imgui_window();
