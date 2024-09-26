@@ -109,12 +109,6 @@ int main() {
         ImGui_ImplGlfw_NewFrame();
         ImGui::NewFrame();
 
-        ImGui::Begin("Line test");
-        ImGui::DragFloat2("pos1", (float*)&pos1, 0.01f, -1.0f, 1.0f);
-        ImGui::DragFloat2("pos2", (float*)&pos2, 0.01f, -1.0f, 1.0f);
-        ImGui::ColorEdit3("color", (float*)&color);
-        ImGui::End();
-
         glClearColor(0.1f, 0.1f, 0.1f, 1.0f);
         glClear(GL_DEPTH_BUFFER_BIT | GL_COLOR_BUFFER_BIT);
 
@@ -122,12 +116,6 @@ int main() {
         renderer.set_view_matrix(view);
 
         sim.run();
-
-        /*Line line((Point(pos1, glm::vec4(color, 1))), Point(pos2, glm::vec4(color, 1)));*/
-        /*renderer.draw_line(line);*/
-        /**/
-        /*Line line2(Point(glm::vec3(-0.2), glm::vec4(1)), Point(glm::vec3(-0.1, -0.1, 0), glm::vec4(1, 0, 0, 1)));*/
-        /*renderer.draw_line(line2);*/
 
         renderer.render();
 

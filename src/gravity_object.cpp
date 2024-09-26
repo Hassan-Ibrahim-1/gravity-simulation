@@ -2,7 +2,6 @@
 
 #include "gravity_object.hpp"
 #include "globals.hpp"
-#include "sim.hpp"
 
 GravityObject::GravityObject(Circle body, float mass, glm::vec3 initial_velocity)
     : body(body), mass(mass), velocity(initial_velocity) {}
@@ -22,7 +21,8 @@ void GravityObject::update_velocity(std::vector<GravityObject>& planets) {
 }
 
 void GravityObject::update_position() {
-    body.transform.position += velocity * Globals::time_step;
+    float time = 1;
+    body.transform.position += velocity * Globals::time_step * 2.0f;
 }
 
 void GravityObject::reset(glm::vec3 position) {

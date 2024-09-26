@@ -54,7 +54,8 @@ void Renderer::draw_line(Line& line) {
 void Renderer::draw_line(Point p1, Point p2) {
     point_to_screen_space(p1);
     point_to_screen_space(p2);
-    Line line(p1, p1);
+    Line line(p1, p2);
+    line.set_color(p1.color);
     _lines.push_back(line);
     push_line_data(line);
 }

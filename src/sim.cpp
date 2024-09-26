@@ -150,9 +150,17 @@ void Sim::render_planets() {
 }
 
 void Sim::render_predicted_paths() {
-    for (auto& position : _traced_positions) {
-        Globals::renderer->draw_point(position);
+    if (_traced_positions.size() < 2) {
+        return;
     }
+
+    for (size_t i = 0; i < _traced_positions.size() - 1; i++) {
+        Globals::renderer->draw_line(_traced_positions[i], _traced_positions[i+1]);
+    }
+
+    /*for (auto& position : _traced_positions) {*/
+    /*    Globals::renderer->draw_point(position);*/
+    /*}*/
 }
 
 void Sim::update_predicted_paths() {
@@ -164,6 +172,9 @@ void Sim::update_predicted_paths() {
     for (const auto& planet : planets) {
         _traced_positions.push_back(Point(planet.body.transform.position, planet.body.color));
     }
+
+    /*time *= _time_steps; */
+    /*time = 1;*/
 
     for (int i = 0; i < _time_steps; i++) {
         for (auto& planet : planets) {
