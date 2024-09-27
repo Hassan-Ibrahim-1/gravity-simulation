@@ -68,28 +68,6 @@ void InputHandler::update_mouse_buttons() {
             _rmb_released = false;
         }
     }
-    /*if (_lmb_clicked) {*/
-    /*    printf("lmb click start time: %.6f\n", glfwGetTime());*/
-    /*    if (_lmb_click_start_time + _click_time_offset < glfwGetTime()) {*/
-    /*        _lmb_clicked = false;*/
-    /*    }*/
-    /*}*/
-    /*else if (_lmb_released) {*/
-    /*    if (_lmb_release_start_time + _release_time_offset < glfwGetTime()) {*/
-    /*        _lmb_released = false;*/
-    /*    }*/
-    /*}*/
-    /**/
-    /*if (_rmb_clicked) {*/
-    /*    if (_rmb_click_start_time + _click_time_offset < glfwGetTime()) {*/
-    /*        _rmb_clicked = false;*/
-    /*    }*/
-    /*}*/
-    /*else if (_rmb_released) {*/
-    /*    if (_rmb_release_start_time + _release_time_offset < glfwGetTime()) {*/
-    /*        _rmb_released = false;*/
-    /*    }*/
-    /*}*/
 }
 
 void InputHandler::key_callback(GLFWwindow* window, int key, int scancode, int action, int mods) {

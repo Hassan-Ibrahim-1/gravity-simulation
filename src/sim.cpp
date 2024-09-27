@@ -112,7 +112,6 @@ void Sim::create_planet_selection_window() {
             planet_names.push_back(name.c_str());
         }
 
-        /*ImGui::Combo("Planets", &current_item, planet_names, IM_ARRAYSIZE(planet_names));*/
         ImGui::Combo("Planets", &current_item, planet_names.data(), planet_names.size());
         ImGui::End();
         _main_index = current_item - 1;

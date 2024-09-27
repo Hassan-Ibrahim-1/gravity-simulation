@@ -23,8 +23,6 @@ inline float _rmb_click_start_time = 0.0f;
 inline float _lmb_release_start_time = 0.0f;
 inline float _rmb_release_start_time = 0.0f;
 // How long it should wait before setting lmb or rmb clicked to false
-/*static constexpr float _click_time_offset = 0.001f;;*/
-/*static constexpr float _release_time_offset = 0.001f;;*/
 // How long it should wait to discard mouse input if it hasn't been read
 static constexpr float _mouse_discard_wait_time = 0.1f;
 
