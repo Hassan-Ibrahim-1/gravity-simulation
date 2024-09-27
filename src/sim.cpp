@@ -1,4 +1,5 @@
 #include <GLFW/glfw3.h>
+#include <cstdio>
 #include <imgui.h>
 
 #include <iostream>
@@ -17,11 +18,7 @@ void Sim::init() {
 void Sim::run() {
     create_base_imgui_window();
     create_planet_windows();
-    /*create_planet_selection_window();*/
-
-    if (_main_planet == nullptr) {
-    
-    }
+    create_planet_selection_window();
 
     if (_start) {
         update();
@@ -38,7 +35,11 @@ void Sim::run() {
 void Sim::create_base_imgui_window() {
     ImGui::Begin("gravity simulation");
 
-    if (ImGui::Button("Add planet")) {
+    if (ImGui::Button("open planets menu")) {
+        _selection_window_open = true;
+    }
+
+    if (ImGui::Button("add planet")) {
         GravityObject& p = create_planet(GravityObject(Circle(Transform(glm::vec3(0), _default_scale),
                                             glm::vec4(1, 1, 1, 1))));
         p.selected = true;
@@ -93,25 +94,29 @@ void Sim::create_planet_windows() {
 void Sim::create_planet_selection_window() {
     static int current_item = 0;
 
-    ImGui::Begin("planets", &_selection_window_open);
+    if (_selection_window_open) {
+        ImGui::Begin("planets", &_selection_window_open);
 
-    std::vector<std::string> tmp_names;
-    std::vector<const char*> planet_names;
-    // TODO: Calculate this only when new planets are added
-    for (size_t i = 0; i < _planets.size(); i++) {
-        std::stringstream ss;
-        ss << "Planet " << i + 1;
-        tmp_names.push_back(ss.str());
-    }
-    
-    for (auto& name : tmp_names) {
-        planet_names.push_back(name.c_str());
-    }
+        std::vector<std::string> tmp_names;
+        std::vector<const char*> planet_names;
+        // TODO: Calculate this only when new planets are added
+        for (size_t i = 0; i < _planets.size(); i++) {
+            std::stringstream ss;
+            ss << "Planet " << i + 1;
+            tmp_names.push_back(ss.str());
+        }
 
-    /*ImGui::Combo("Planets", &current_item, planet_names, IM_ARRAYSIZE(planet_names));*/
-    ImGui::Combo("Planets", &current_item, planet_names.data(), planet_names.size());
-    ImGui::End();
-    _main_planet = &_planets[current_item];
+        planet_names.push_back("None");
+
+        for (auto& name : tmp_names) {
+            planet_names.push_back(name.c_str());
+        }
+
+        /*ImGui::Combo("Planets", &current_item, planet_names, IM_ARRAYSIZE(planet_names));*/
+        ImGui::Combo("Planets", &current_item, planet_names.data(), planet_names.size());
+        ImGui::End();
+        _main_index = current_item - 1;
+    }
 }
 
 void Sim::poll_input() {
@@ -139,8 +144,15 @@ void Sim::spawn_initial_planets() {
 }
 
 void Sim::update() {
+    glm::vec3 relative_velocity(0);
+
+    if (_main_index != -1) {
+        relative_velocity = _planets[_main_index].velocity;
+    }
+    
     for (GravityObject& planet : _planets) {
         planet.update_velocity(_planets);
+        planet.velocity -= relative_velocity;
     }
 
     for (GravityObject& planet : _planets) {
@@ -171,6 +183,7 @@ void Sim::render_predicted_paths() {
 void Sim::update_predicted_paths() {
     _traced_positions.clear();
     std::vector<GravityObject> planets = _planets;
+
     
     for (size_t i = 0; i < _planets.size(); i++) {
         _traced_positions.push_back(std::vector<Point>());
@@ -178,8 +191,14 @@ void Sim::update_predicted_paths() {
     }
 
     for (size_t i = 0; i < _time_steps; i++) {
+        glm::vec3 relative_velocity(0);
+        if (_main_index != -1) {
+            printf("setting relative velocity index: %d\n", _main_index);
+            relative_velocity = planets[_main_index].velocity;
+        }
         for (auto& planet : planets) {
             planet.update_velocity(planets);
+            planet.velocity -= relative_velocity;
         }
         for (size_t i = 0; i < planets.size(); i++) {
             planets[i].update_position();

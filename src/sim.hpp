@@ -16,7 +16,7 @@ private:
     // Each vector corresponds to its planet
     std::vector<std::vector<Point>> _traced_positions;
     // planet used as a reference for relative velocity
-    GravityObject* _main_planet = nullptr;
+    int _main_index = -1; // -1 if no main set
     /*float mass1 = 20000.0f;*/
     /*float mass2 = 10000.0f;*/
 

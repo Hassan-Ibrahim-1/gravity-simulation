@@ -10,7 +10,7 @@ namespace Globals {
 inline Camera camera;
 inline Renderer* renderer;
 inline float delta_time = 0.0f;
-inline float time_step = 0.01f;
+inline constexpr float time_step = 0.01f;
 
 }
 
